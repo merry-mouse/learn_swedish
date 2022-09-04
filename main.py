@@ -74,10 +74,30 @@ def stop():
     pygame.mixer.music.stop()
     song_box.select_clear(ACTIVE)
 
+# create global pause variable
+global paused 
+paused = False
+
+# pause and unpause audio
+def pause(is_paused):
+    global paused
+    paused = is_paused
+
+    if paused:
+        # unpause
+        pygame.mixer.music.unpause()
+        paused = False
+    else:
+        # pause
+        pygame.mixer.music.pause()
+        paused = True
+
+
+
 
 # create player control buttons
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
-pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0)
+pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, command=lambda: pause(paused))
 stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
 
 play_button.grid(row=0, column=0, padx=10)
