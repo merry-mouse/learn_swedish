@@ -93,8 +93,6 @@ def pause(is_paused):
         paused = True
 
 
-
-
 # create player control buttons
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
 pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, command=lambda: pause(paused))
