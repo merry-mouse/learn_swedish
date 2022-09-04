@@ -69,13 +69,16 @@ def play():
     audio = ("C:\\Users\potek\PythonAfter6months\FINAL_PROJECT\hej.mp3")
     pygame.mixer.music.load(audio)
     pygame.mixer.music.play(loops=0)
-
+# stop playing audio
+def stop():
+    pygame.mixer.music.stop()
+    song_box.select_clear(ACTIVE)
 
 
 # create player control buttons
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
 pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0)
-stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0)
+stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
 
 play_button.grid(row=0, column=0, padx=10)
 pause_button.grid(row=0, column=2, padx=10)
