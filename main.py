@@ -21,10 +21,12 @@ numOfPages = pdfReader.numPages
 page = pdfReader.getPage(14)
 EngText = page.extractText()
 
-# 11.56 seconds!
-import time
-start_time = time.time()
+# using timer to understand how long would the translation take
+# import time
+# start_time = time.time()
 
+
+# regex patterns for separating sentences from the text on the page
 alphabets= "([A-Za-z])"
 prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
 suffixes = "(Inc|Ltd|Jr|Sr|Co)"
@@ -33,7 +35,7 @@ acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
 websites = "[.](com|net|org|io|gov)"
 digits = "([0-9])"
 
-
+# split each sentence
 def split_into_sentences(text):
     text = " " + text + "  "
     text = text.replace("\n"," ")
@@ -63,6 +65,7 @@ def split_into_sentences(text):
     
     pygame.init()
     pygame.mixer.init()
+    # print eng text and voice it
     for b in sentences:
         print(b)
         mp3_fo = BytesIO()
@@ -70,7 +73,7 @@ def split_into_sentences(text):
         ENG_mp3_object.write_to_fp(mp3_fo)
         pygame.mixer.music.load(mp3_fo, "mp3")
         pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy() == True:
+        while pygame.mixer.music.get_busy() == True: # to wait until player stops playing
             wait
         # translate sentence from eng to swedish
         translator = Translator()
@@ -86,7 +89,7 @@ def split_into_sentences(text):
             wait
         # playsound(SWE_mp3)
 split_into_sentences(EngText)
-print("My program took", time.time() - start_time, "to run")
+# print("My program took", time.time() - start_time, "to run")
 
 
 
@@ -100,6 +103,8 @@ print("My program took", time.time() - start_time, "to run")
 
 # # play mp3
 # playsound("C:\\Users\potek\PythonAfter6months\FINAL_PROJECT\hej.mp3")
+
+
 
 
 # # MAKING A PLAYER 
