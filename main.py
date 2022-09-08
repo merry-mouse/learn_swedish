@@ -18,7 +18,7 @@ pdfReader = PyPDF2.PdfFileReader(pdfFile)
 numOfPages = pdfReader.numPages
 
 # get particular page and extract text
-page = pdfReader.getPage(14)
+page = pdfReader.getPage(13)
 EngText = page.extractText()
 
 # using timer to understand how long would the translation take
@@ -66,30 +66,53 @@ def split_into_sentences(text):
     pygame.init()
     pygame.mixer.init()
     # print eng text and voice it
-    for b in sentences:
-        print(b)
-        mp3_fo = BytesIO()
-        ENG_mp3_object = gTTS(b, lang="en")
-        ENG_mp3_object.write_to_fp(mp3_fo)
-        pygame.mixer.music.load(mp3_fo, "mp3")
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy() == True: # to wait until player stops playing
-            wait
+    for eng_sentence in sentences:
+        text_to_speach_translate(eng_sentence)
+        # print(b)
+        # mp3_fo = BytesIO()
+        # ENG_mp3_object = gTTS(b, lang="en")
+        # ENG_mp3_object.write_to_fp(mp3_fo)
+        # pygame.mixer.music.load(mp3_fo, "mp3")
+        # pygame.mixer.music.play()
+        # while pygame.mixer.music.get_busy() == True: # to wait until player stops playing
+        #     wait
         # translate sentence from eng to swedish
-        translator = Translator()
-        translated_text = translator.translate(b, dest='sv',).text
-        print(translated_text)
-        # print eng and swe sentences one after another
-        mp3_fo = BytesIO()
-        SWE_mp3_object = gTTS(translated_text, lang="sv")
-        SWE_mp3_object.write_to_fp(mp3_fo)
-        pygame.mixer.music.load(mp3_fo, "mp3")
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy() == True:
-            wait
+        # translator = Translator()
+        # translated_text = translator.translate(sentence, dest='sv',).text
+        # print(translated_text)
+        # # print eng and swe sentences one after another
+        # mp3_fo = BytesIO()
+        # SWE_mp3_object = gTTS(translated_text, lang="sv")
+        # SWE_mp3_object.write_to_fp(mp3_fo)
+        # pygame.mixer.music.load(mp3_fo, "mp3")
+        # pygame.mixer.music.play()
+        # while pygame.mixer.music.get_busy() == True:
+        #     wait
         # playsound(SWE_mp3)
-split_into_sentences(EngText)
+
 # print("My program took", time.time() - start_time, "to run")
+def text_to_speach_translate(eng_sentence):
+    print(eng_sentence)
+    mp3_bytes_object = BytesIO() #manipulates bytes data in memory
+    text_to_speech_mp3_object = gTTS(eng_sentence, lang="en")
+    text_to_speech_mp3_object.write_to_fp(mp3_bytes_object)
+    pygame.mixer.music.load(mp3_bytes_object, "mp3")
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True: # to wait until player stops playing
+        wait
+
+    translator = Translator()
+    translated_to_swe_sentence = translator.translate(eng_sentence, dest='sv',).text
+    print(translated_to_swe_sentence)
+    # print eng and swe sentences one after another
+    mp3_bytes_object = BytesIO()
+    text_to_speech_mp3_object = gTTS(translated_to_swe_sentence, lang="sv")
+    text_to_speech_mp3_object.write_to_fp(mp3_bytes_object)
+    pygame.mixer.music.load(mp3_bytes_object, "mp3")
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True:
+        wait
+split_into_sentences(EngText)
 
 
 
