@@ -1,6 +1,7 @@
 from email.policy import strict
 from io import BytesIO
 from multiprocessing.connection import wait
+from operator import gt
 from typing import List
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
@@ -65,45 +66,32 @@ def split_into_sentences(text):
     
     pygame.init()
     pygame.mixer.init()
-    # print eng text and voice it
+    # for each devided sentence, text-to-speech it and play
     for eng_sentence in sentences:
-        text_to_speach_translate(eng_sentence)
+        text_to_speech_play(eng_sentence, "en")
+
+        # translate eng sentence to swe 
+        translator = Translator() # initiate translator
+        translated_to_swe_sentence = translator.translate(eng_sentence, dest='sv',).text
+        text_to_speech_play(translated_to_swe_sentence, "sv")
 # print("My program took", time.time() - start_time, "to run")
 
 
-def text_to_speach_translate(eng_sentence): 
-    # print english sentence
-    print(eng_sentence) 
-    # manipulates bytes data in memory
-    mp3_bytes_object = BytesIO() 
-    # text-to-speech english sentence
-    text_to_speech_mp3_object = gTTS(eng_sentence, lang="en") 
-    # for direct output of mp3 file without saving it
-    text_to_speech_mp3_object.write_to_fp(mp3_bytes_object) 
-    # load and play mp3 object
-    pygame.mixer.music.load(mp3_bytes_object, "mp3")
-    pygame.mixer.music.play()
-    # to wait until player stops playing
-    while pygame.mixer.music.get_busy() == True: 
-        wait
-
-    # translate eng sentence to swe 
-    translator = Translator()
-    translated_to_swe_sentence = translator.translate(eng_sentence, dest='sv',).text
-    # print translated sentence
-    print(translated_to_swe_sentence)
-    # manipulates bytes data in memory
-    mp3_bytes_object = BytesIO()
-    # text-to-speech swedish sentence
-    text_to_speech_mp3_object = gTTS(translated_to_swe_sentence, lang="sv")
-    # for direct output of mp3 file without saving it
+def text_to_speech_play(sentence, language):
+    print(sentence)
+    # initialize BytesIO
+    mp3_bytes_object = BytesIO() # manipulates bytes data into memory
+    # text-to-speech given sentence
+    text_to_speech_mp3_object = gTTS(sentence, lang=language)
+    # store it in mp3_bytes_object
     text_to_speech_mp3_object.write_to_fp(mp3_bytes_object)
-    # load and play mp3 object
+    # load and ply using pygame mixer
     pygame.mixer.music.load(mp3_bytes_object, "mp3")
     pygame.mixer.music.play()
-    # to wait until player stops playing
+    # needs to wait until sentence stop playing 
     while pygame.mixer.music.get_busy() == True:
         wait
+
 split_into_sentences(EngText)
 
 
@@ -118,6 +106,7 @@ split_into_sentences(EngText)
 
 # # play mp3
 # playsound("C:\\Users\potek\PythonAfter6months\FINAL_PROJECT\hej.mp3")
+
 
 
 
