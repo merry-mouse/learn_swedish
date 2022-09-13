@@ -93,7 +93,7 @@ root.option_add('*Font', 'Times 15')
 pygame.mixer.init()
 
 # create playlist box
-song_box = Listbox(root, bg="black", fg="green", width=800, height=20)
+song_box = Listbox(root, bg="black", fg="yellow", width=800, height=20)
 song_box.pack(pady=20)
 
 # define player control buttons
