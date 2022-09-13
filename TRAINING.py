@@ -2,6 +2,7 @@ from email.policy import strict
 from io import BytesIO
 from multiprocessing.connection import wait
 from operator import gt
+from time import sleep
 from typing import List
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
@@ -23,9 +24,9 @@ pdfReader = PyPDF2.PdfFileReader(pdfFile)
 numOfPages = pdfReader.numPages
 
 # get particular page and extract text
-page = pdfReader.getPage(9) # starts with 0!
+page = pdfReader.getPage(9)
 EngText = page.extractText()
-
+print(EngText)
 
 # regex patterns for separating sentences from the text on the page
 alphabets= "([A-Za-z])"
@@ -38,7 +39,7 @@ digits = "([0-9])"
 
 # split each sentence
 def split_into_sentences(text):
-    text = " " + text + "  "
+    text = " " + text + " "
     text = text.replace("\n"," ")
     text = re.sub(prefixes,"\\1<prd>",text)
     text = re.sub(websites,"<prd>\\1",text)
@@ -62,13 +63,13 @@ def split_into_sentences(text):
     text = text.replace("<prd>",".")
     sentences = text.split("<stop>")
     sentences = sentences[:-1]
+
     sentences = [s.strip() for s in sentences]
     return sentences
     
 
-
 # print, and play text-to-speach splitted sentences
-def text_to_speech(sentence, language):
+def text_to_speech_play(sentence, language):
     
     # initialize BytesIO
     mp3_bytes_object = BytesIO() # manipulates bytes data into memory
@@ -78,9 +79,14 @@ def text_to_speech(sentence, language):
     text_to_speech_mp3_object.write_to_fp(mp3_bytes_object)
     return mp3_bytes_object
 
-# call function to split sentences and store it 
-eng_page = split_into_sentences(EngText)
+# called split function
+# got a LIST of ENG sentences from one page
 
+
+eng_page = split_into_sentences(EngText)
+# print(eng_page)
+# for sentence in eng_page:
+#     print(sentence)
 
 # MAKING A PLAYER 
 root = Tk() # constructor
@@ -112,12 +118,12 @@ def play():
         song_box.insert(END, eng_sentence) # Use END as the first argument if you want to add new lines to the end of the listbox
         root.update()
         # create mp3object eng sentence
-        eng_audio = text_to_speech(eng_sentence, "en")
+        eng_audio = text_to_speech_play(eng_sentence, "en")
         # translate eng sentence to swe 
         translator = Translator() # initiate translator
         translated_to_swe_sentence = translator.translate(eng_sentence, dest='sv',).text
         # create mpr object swe sentence
-        swe_audio = text_to_speech(translated_to_swe_sentence, "sv")
+        swe_audio = text_to_speech_play(translated_to_swe_sentence, "sv")
         pygame.mixer.music.load(eng_audio, "mp3")
         
         pygame.mixer.music.play(loops=0)
@@ -167,3 +173,27 @@ pause_button.grid(row=0, column=2, padx=10)
 stop_button.grid(row=0, column=1, padx=10)
 
 root.mainloop()
+
+
+
+
+
+''' Code that I might need'''
+
+# # in case I need to save swe text into text file
+# codecs.open('SWE.txt', encoding='utf-8', mode='w+').write(translated_text)
+# print(translated_text)
+
+# # transform swe text into speech and save as mp3
+# SWE_mp3 = gTTS(translated_text, lang="sv")
+# SWE_mp3.save("SWE_LittlePrince.mp3")
+
+# # play mp3
+# playsound("C:\\Users\potek\PythonAfter6months\FINAL_PROJECT\hej.mp3")
+
+
+# in case I need to check operational time
+# # using timer to understand how long would the translation take
+# # import time
+# # start_time = time.time()
+# # print("My program took", time.time() - start_time, "to run")
