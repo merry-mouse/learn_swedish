@@ -86,7 +86,8 @@ eng_page = split_into_sentences(EngText)
 root = Tk() # constructor
 root.title("Little Prince Swedish lang player")
 root.iconbitmap("player.ico")
-root.geometry("800x450")
+root.geometry("900x600")
+root.option_add('*Font', 'Times 15')
 
 # initialize pygame mixer
 pygame.mixer.init()
