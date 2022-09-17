@@ -13,7 +13,7 @@ import re # to separate sentences from the text
 # for creating a player:
 from tkinter import * # standard GUI lib
 import pygame
-
+import time
 
 # read pdf in english
 pdfFile = open("LittlePrince.pdf","rb")
@@ -124,14 +124,14 @@ def play():
         pygame.mixer.music.play(loops=0)
         # needs to wait until sentence stop playing 
         while pygame.mixer.music.get_busy() == True:
-            wait
+            wait()
         pygame.mixer.music.load(swe_audio, "mp3")
         song_box.insert(END, str(translated_to_swe_sentence)) # Use END as the first argument if you want to add new lines to the end of the listbox
         root.update()
         pygame.mixer.music.play(loops=0)
         # needs to wait until sentence stop playing 
         while pygame.mixer.music.get_busy() == True:
-            wait
+            wait()
 
 
 # stop playing audio
@@ -153,10 +153,10 @@ def pause(is_paused):
         pygame.mixer.music.unpause()
         paused = False
     else:
-        # pause
+        # pause00000000000
+        
         pygame.mixer.music.pause()
         paused = True
-
 
 # create player control buttons
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
