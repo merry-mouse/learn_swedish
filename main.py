@@ -1,4 +1,5 @@
 from email.policy import strict
+import imp
 from io import BytesIO
 from multiprocessing.connection import wait
 from operator import gt
@@ -14,7 +15,9 @@ import re # to separate sentences from the text
 from tkinter import * # standard GUI lib
 import pygame
 import time
+import os
 
+sentence = 0
 # read pdf in english
 pdfFile = open("LittlePrince.pdf","rb")
 pdfReader = PyPDF2.PdfFileReader(pdfFile)
@@ -124,20 +127,21 @@ def play():
         pygame.mixer.music.play(loops=0)
         # needs to wait until sentence stop playing 
         while pygame.mixer.music.get_busy() == True:
-            wait()
+            time.sleep(0.5)
         pygame.mixer.music.load(swe_audio, "mp3")
         song_box.insert(END, str(translated_to_swe_sentence)) # Use END as the first argument if you want to add new lines to the end of the listbox
         root.update()
         pygame.mixer.music.play(loops=0)
         # needs to wait until sentence stop playing 
         while pygame.mixer.music.get_busy() == True:
-            wait()
+            time.sleep(0.5)
 
 
 # stop playing audio
 def stop():
     pygame.mixer.music.stop()
     song_box.select_clear(ACTIVE)
+    
 
 # create global pause variable
 global paused 
@@ -153,10 +157,10 @@ def pause(is_paused):
         pygame.mixer.music.unpause()
         paused = False
     else:
-        # pause00000000000
-        
+        # pause
         pygame.mixer.music.pause()
         paused = True
+        os.system("pause")
 
 # create player control buttons
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
