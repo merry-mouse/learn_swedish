@@ -1,14 +1,9 @@
-from email.policy import strict
-import imp
 from io import BytesIO
-from multiprocessing.connection import wait
-from operator import gt
 from typing import List
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
 import codecs # for utf-8 encoding, otherwise can't read swedish letters
 from gtts import gTTS # for making text-to-speech mp3 file
-from playsound import playsound # for playing saved mp3
 import pygame # to build a player and play the sound
 import re # to separate sentences from the text
 # for creating a player:
