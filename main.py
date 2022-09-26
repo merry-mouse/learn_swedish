@@ -17,7 +17,6 @@ import pygame
 import time
 import os
 
-sentence = 0
 # read pdf in english
 pdfFile = open("LittlePrince.pdf","rb")
 pdfReader = PyPDF2.PdfFileReader(pdfFile)
@@ -122,7 +121,7 @@ def play():
         translated_to_swe_sentence = translator.translate(eng_sentence, dest='sv',).text
         # create mpr object swe sentence
         swe_audio = text_to_speech(translated_to_swe_sentence, "sv")
-        pygame.mixer.music.load(eng_audio, "mp3")
+        pygame.mixer.music.load(eng_audio , "mp3")
         
         pygame.mixer.music.play(loops=0)
         # needs to wait until sentence stop playing 
@@ -135,7 +134,6 @@ def play():
         # needs to wait until sentence stop playing 
         while pygame.mixer.music.get_busy() == True:
             time.sleep(0.5)
-
 
 # stop playing audio
 def stop():
