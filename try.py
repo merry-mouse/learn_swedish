@@ -1,4 +1,5 @@
 from io import BytesIO
+from time import sleep
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
 import codecs # for utf-8 encoding, otherwise can't read swedish letters
@@ -70,7 +71,22 @@ for eng_sentence in eng_page:
     translated_to_swe_sentence = translator.translate(eng_sentence,src='en', dest='sv').text
     swe_page.append(translated_to_swe_sentence)
 
+# print, and play text-to-speach splitted sentences
+def text_to_speech(sentence, language):
+    
+    # text-to-speech given sentence
+    text_to_speech_mp3_object = gTTS(sentence, lang=language)
+    # store it in mp3_bytes_object
+    text_to_speech_mp3_object.save(f"{sentence[0:3]}.mp3")
 
+text_to_speech(eng_page[0], "en")
+text_to_speech(swe_page[0], "sv")
+
+eng_audio = AudioFileClip("He .mp3")
+swe_audio = AudioFileClip("Han.mp3")
+
+final = concatenate_audioclips([eng_audio, swe_audio])
+final.write_audiofile("merged.mp3")
 
 # MAKING A PLAYER 
 root = Tk() # constructor
@@ -104,6 +120,8 @@ def play():
     # insert english text
     for i in merged_text:
         song_box.insert(END, i) # Use END as the first argument if you want to add new lines to the end of the listbox
+    pygame.mixer.music.load("merged.mp3" , "mp3")
+    pygame.mixer.music.play(loops=0)
     
 # stop playing audio
 def stop():
