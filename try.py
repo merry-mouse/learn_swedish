@@ -19,7 +19,7 @@ pdfReader = PyPDF2.PdfFileReader(pdfFile)
 numOfPages = pdfReader.numPages
 
 # get particular page and extract text
-page = pdfReader.getPage(9) # starts with 0!
+page = pdfReader.getPage(1) # starts with 0!
 EngText = page.extractText()
 
 # regex patterns for separating sentences from the text on the page
@@ -71,90 +71,95 @@ for eng_sentence in eng_page:
     translated_to_swe_sentence = translator.translate(eng_sentence,src='en', dest='sv').text
     swe_page.append(translated_to_swe_sentence)
 
-# print, and play text-to-speach splitted sentences
-def text_to_speech(sentence, language):
+
+
+
+# create text-to-speech audiofiles, save them in sounds directory
+def text_to_speech(english_text, swedish_text):
+    for i in range(len(english_text)):
+        tts_eng_sent = gTTS(english_text[i], lang="en")
+        tts_swe_sent = gTTS(swedish_text[i], lang="sv")
+        tts_eng_sent.save(f"sounds/eng_sent{i}.mp3")
+        tts_swe_sent.save(f"sounds/swe_sent{i}.mp3")
+
+text_to_speech(eng_page, swe_page)
+
+# eng_audio = AudioFileClip("He .mp3")
+# swe_audio = AudioFileClip("Han.mp3")
+
+# final = concatenate_audioclips([eng_audio, swe_audio])
+# final.write_audiofile("merged.mp3")
+
+
+
+
+# # MAKING A PLAYER 
+# root = Tk() # constructor
+# root.title("Little Prince Swedish lang player")
+# root.iconbitmap("player.ico")
+# root.geometry("900x600")
+# root.option_add('*Font', 'Times 15')
+
+# # initialize pygame mixer
+# pygame.mixer.init()
+
+# # create playlist box
+# song_box = Listbox(root, bg="black", fg="yellow", width=800, height=20)
+# song_box.pack(pady=20)
+
+# # define player control buttons
+# play_button_img = PhotoImage(file="images/button_play_48px.png")
+# pause_button_img = PhotoImage(file="images/button_pause_48px.png")
+# stop_button_img = PhotoImage(file="images/button_stop_48px.png")
+
+# # create player control frame
+# controls_frame = Frame(root)
+# controls_frame.pack()
+
+
+
+# merged_text = [x for y in zip(eng_page, swe_page) for x in y] #merge eng and swedish sentences into one text
+
+# # play eng and swe mp3 files
+# def play():
+#     # insert text
+#     for i in merged_text:
+#         song_box.insert(END, i) # Use END as the first argument if you want to add new lines to the end of the listbox
+#     pygame.mixer.music.load("merged.mp3" , "mp3")
+#     pygame.mixer.music.play(loops=0)
     
-    # text-to-speech given sentence
-    text_to_speech_mp3_object = gTTS(sentence, lang=language)
-    # store it in mp3_bytes_object
-    text_to_speech_mp3_object.save(f"{sentence[0:3]}.mp3")
-
-text_to_speech(eng_page[0], "en")
-text_to_speech(swe_page[0], "sv")
-
-eng_audio = AudioFileClip("He .mp3")
-swe_audio = AudioFileClip("Han.mp3")
-
-final = concatenate_audioclips([eng_audio, swe_audio])
-final.write_audiofile("merged.mp3")
-
-# MAKING A PLAYER 
-root = Tk() # constructor
-root.title("Little Prince Swedish lang player")
-root.iconbitmap("player.ico")
-root.geometry("900x600")
-root.option_add('*Font', 'Times 15')
-
-# initialize pygame mixer
-pygame.mixer.init()
-
-# create playlist box
-song_box = Listbox(root, bg="black", fg="yellow", width=800, height=20)
-song_box.pack(pady=20)
-
-# define player control buttons
-play_button_img = PhotoImage(file="images/button_play_48px.png")
-pause_button_img = PhotoImage(file="images/button_pause_48px.png")
-stop_button_img = PhotoImage(file="images/button_stop_48px.png")
-
-# create player control frame
-controls_frame = Frame(root)
-controls_frame.pack()
-
-
-
-merged_text = [x for y in zip(eng_page, swe_page) for x in y] #merge eng and swedish sentences into one text
-
-# play eng and swe mp3 files
-def play():
-    # insert english text
-    for i in merged_text:
-        song_box.insert(END, i) # Use END as the first argument if you want to add new lines to the end of the listbox
-    pygame.mixer.music.load("merged.mp3" , "mp3")
-    pygame.mixer.music.play(loops=0)
-    
-# stop playing audio
-def stop():
-    pygame.mixer.music.stop()
-    song_box.select_clear(ACTIVE)
+# # stop playing audio
+# def stop():
+#     pygame.mixer.music.stop()
+#     song_box.select_clear(ACTIVE)
     
 
-# create global pause variable
-global paused 
-paused = False
+# # create global pause variable
+# global paused 
+# paused = False
 
-# pause and unpause audio
-def pause(is_paused):
-    global paused
-    paused = is_paused
+# # pause and unpause audio
+# def pause(is_paused):
+#     global paused
+#     paused = is_paused
 
-    if paused:
-        # unpause
-        pygame.mixer.music.unpause()
-        paused = False
-    else:
-        # pause
-        pygame.mixer.music.pause()
-        paused = True
-        # os.system("pause")
+#     if paused:
+#         # unpause
+#         pygame.mixer.music.unpause()
+#         paused = False
+#     else:
+#         # pause
+#         pygame.mixer.music.pause()
+#         paused = True
+#         # os.system("pause")
 
-# create player control buttons
-play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
-pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, command=lambda: pause(paused))
-stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
+# # create player control buttons
+# play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
+# pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, command=lambda: pause(paused))
+# stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
 
-play_button.grid(row=0, column=0, padx=10)
-pause_button.grid(row=0, column=2, padx=10)
-stop_button.grid(row=0, column=1, padx=10)
+# play_button.grid(row=0, column=0, padx=10)
+# pause_button.grid(row=0, column=2, padx=10)
+# stop_button.grid(row=0, column=1, padx=10)
 
-root.mainloop()
+# root.mainloop()
