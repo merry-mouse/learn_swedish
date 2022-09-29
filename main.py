@@ -70,26 +70,26 @@ for eng_sentence in eng_page:
     swe_page.append(translated_to_swe_sentence)
 
 
-# create text-to-speech audiofiles, save them in sounds directory
-def text_to_speech(english_text, swedish_text):
-    for i in range(len(english_text)):
-        tts_eng_sent = gTTS(english_text[i], lang="en")
-        tts_swe_sent = gTTS(swedish_text[i], lang="sv")
-        tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}.mp3")
-        tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}_2.mp3")
+# # create text-to-speech audiofiles, save them in sounds directory
+# def text_to_speech(english_text, swedish_text):
+#     for i in range(len(english_text)):
+#         tts_eng_sent = gTTS(english_text[i], lang="en")
+#         tts_swe_sent = gTTS(swedish_text[i], lang="sv")
+#         tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}.mp3")
+#         tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}_2.mp3")
 
-# call text-to-speech function, create sounds from each sentence, store them in sounds
-text_to_speech(eng_page, swe_page)
-# clips = [AudioFileClip(c) for c in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds")]
+# # call text-to-speech function, create sounds from each sentence, store them in sounds
+# text_to_speech(eng_page, swe_page)
+# # clips = [AudioFileClip(c) for c in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds")]
 
-# store all sounds objects in one list
-clips =[]
-for a in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds"):
-    clips.append(AudioFileClip("./sounds/" + a))
+# # store all sounds objects in one list
+# clips =[]
+# for a in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds"):
+#     clips.append(AudioFileClip("./sounds/" + a))
 
-# merge all sounds together
-c = concatenate_audioclips(clips)
-c.write_audiofile("merged.mp3")
+# # merge all sounds together
+# c = concatenate_audioclips(clips)
+# c.write_audiofile("merged.mp3")
 
 # merge two texts together
 merged_text = [x for y in zip(eng_page, swe_page) for x in y]
@@ -104,6 +104,10 @@ root.option_add('*Font', 'Times 15')
 # initialize pygame mixer
 pygame.mixer.init()
 
+# add pdf function
+def add_pdf():
+    pass
+
 # create playlist box
 song_box = Listbox(root, bg="black", fg="yellow", width=800, height=20)
 song_box.pack(pady=20)
@@ -116,6 +120,8 @@ stop_button_img = PhotoImage(file="images/button_stop_48px.png")
 # create player control frame
 controls_frame = Frame(root)
 controls_frame.pack()
+
+# put eng and swe text to the player
 for sentence in merged_text:
     song_box.insert(END, sentence)
 
@@ -154,5 +160,14 @@ stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, comman
 play_button.grid(row=0, column=0, padx=10)
 pause_button.grid(row=0, column=2, padx=10)
 stop_button.grid(row=0, column=1, padx=10)
+
+# create Menu
+my_menu = Menu(root)
+root.config(menu=my_menu)
+
+# Add Add PDF Menu
+add_pdf_menu = Menu(my_menu)
+my_menu.add_cascade(label="Add PDF", menu=add_pdf_menu)
+add_pdf_menu.add_command(label="Add PDF in English", command=add_pdf)
 
 root.mainloop()
