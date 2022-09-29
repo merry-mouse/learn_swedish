@@ -91,6 +91,9 @@ for a in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds"):
 c = concatenate_audioclips(clips)
 c.write_audiofile("merged.mp3")
 
+# merge two texts together
+merged_text = [i +" " + j for i, j in zip(eng_page, swe_page)]
+
 # MAKING A PLAYER 
 root = Tk() # constructor
 root.title("Little Prince Swedish lang player")
@@ -122,7 +125,7 @@ def play():
 def stop():
     pygame.mixer.music.stop()
     song_box.select_clear(ACTIVE)
-    
+
 # create global pause variable
 global paused 
 paused = False
