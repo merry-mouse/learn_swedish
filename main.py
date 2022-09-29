@@ -1,16 +1,12 @@
-from io import BytesIO
-from typing import List
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
-import codecs # for utf-8 encoding, otherwise can't read swedish letters
 from gtts import gTTS # for making text-to-speech mp3 file
 import pygame # to build a player and play the sound
 import re # to separate sentences from the text
 # for creating a player:
 from tkinter import * # standard GUI lib
-import pygame
-import time
 import os
+from moviepy.editor import concatenate_audioclips, AudioFileClip
 
 # read pdf in english
 pdfFile = open("LittlePrince.pdf","rb")
@@ -20,7 +16,7 @@ pdfReader = PyPDF2.PdfFileReader(pdfFile)
 numOfPages = pdfReader.numPages
 
 # get particular page and extract text
-page = pdfReader.getPage(9) # starts with 0!
+page = pdfReader.getPage(1) # starts with 0!
 EngText = page.extractText()
 
 
@@ -60,24 +56,40 @@ def split_into_sentences(text):
     sentences = text.split("<stop>")
     sentences = sentences[:-1]
     sentences = [s.strip() for s in sentences]
+    sentences = [s.replace("\t", " ") for s in sentences] # get rid of tabs
     return sentences
     
-
-
-# print, and play text-to-speach splitted sentences
-def text_to_speech(sentence, language):
-    
-    # initialize BytesIO
-    mp3_bytes_object = BytesIO() # manipulates bytes data into memory
-    # text-to-speech given sentence
-    text_to_speech_mp3_object = gTTS(sentence, lang=language)
-    # store it in mp3_bytes_object
-    text_to_speech_mp3_object.write_to_fp(mp3_bytes_object)
-    return mp3_bytes_object
-
 # call function to split sentences and store it 
 eng_page = split_into_sentences(EngText)
+swe_page = []
 
+# Translate eng page to swedish
+translator = Translator() # initiate translator
+for eng_sentence in eng_page:
+    translated_to_swe_sentence = translator.translate(eng_sentence,src='en', dest='sv').text
+    swe_page.append(translated_to_swe_sentence)
+
+
+# create text-to-speech audiofiles, save them in sounds directory
+def text_to_speech(english_text, swedish_text):
+    for i in range(len(english_text)):
+        tts_eng_sent = gTTS(english_text[i], lang="en")
+        tts_swe_sent = gTTS(swedish_text[i], lang="sv")
+        tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}.mp3")
+        tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}_2.mp3")
+
+# call text-to-speech function, create sounds from each sentence, store them in sounds
+text_to_speech(eng_page, swe_page)
+# clips = [AudioFileClip(c) for c in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds")]
+
+# store all sounds objects in one list
+clips =[]
+for a in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds"):
+    clips.append(AudioFileClip("./sounds/" + a))
+
+# merge all sounds together
+c = concatenate_audioclips(clips)
+c.write_audiofile("merged.mp3")
 
 # MAKING A PLAYER 
 root = Tk() # constructor
@@ -104,38 +116,13 @@ controls_frame.pack()
 
 # play eng and swe mp3 files
 def play():
-    for eng_sentence in eng_page:
-        eng_sentence = eng_sentence.replace("\t", " ")
-        # insert english text
-        song_box.insert(END, eng_sentence) # Use END as the first argument if you want to add new lines to the end of the listbox
-        root.update()
-        # create mp3object eng sentence
-        eng_audio = text_to_speech(eng_sentence, "en")
-        # translate eng sentence to swe 
-        translator = Translator() # initiate translator
-        translated_to_swe_sentence = translator.translate(eng_sentence, dest='sv',).text
-        # create mpr object swe sentence
-        swe_audio = text_to_speech(translated_to_swe_sentence, "sv")
-        pygame.mixer.music.load(eng_audio , "mp3")
-        
-        pygame.mixer.music.play(loops=0)
-        # needs to wait until sentence stop playing 
-        while pygame.mixer.music.get_busy() == True:
-            time.sleep(0.5)
-        pygame.mixer.music.load(swe_audio, "mp3")
-        song_box.insert(END, str(translated_to_swe_sentence)) # Use END as the first argument if you want to add new lines to the end of the listbox
-        root.update()
-        pygame.mixer.music.play(loops=0)
-        # needs to wait until sentence stop playing 
-        while pygame.mixer.music.get_busy() == True:
-            time.sleep(0.5)
-
+    pygame.mixer.music.load("merged.mp3", "mp3")
+    pygame.mixer.music.play(loops=0)
 # stop playing audio
 def stop():
     pygame.mixer.music.stop()
     song_box.select_clear(ACTIVE)
     
-
 # create global pause variable
 global paused 
 paused = False
@@ -153,7 +140,6 @@ def pause(is_paused):
         # pause
         pygame.mixer.music.pause()
         paused = True
-        os.system("pause")
 
 # create player control buttons
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
