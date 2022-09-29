@@ -92,7 +92,7 @@ c = concatenate_audioclips(clips)
 c.write_audiofile("merged.mp3")
 
 # merge two texts together
-merged_text = [i +" " + j for i, j in zip(eng_page, swe_page)]
+merged_text = [x for y in zip(eng_page, swe_page) for x in y]
 
 # MAKING A PLAYER 
 root = Tk() # constructor
@@ -116,9 +116,11 @@ stop_button_img = PhotoImage(file="images/button_stop_48px.png")
 # create player control frame
 controls_frame = Frame(root)
 controls_frame.pack()
+for sentence in merged_text:
+    song_box.insert(END, sentence)
 
 # play eng and swe mp3 files
-def play():
+def play():    
     pygame.mixer.music.load("merged.mp3", "mp3")
     pygame.mixer.music.play(loops=0)
 # stop playing audio
