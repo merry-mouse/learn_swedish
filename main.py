@@ -94,7 +94,7 @@ c.write_audiofile("merged.mp3")
 # MAKING A PLAYER 
 root = Tk() # constructor
 root.title("Little Prince Swedish lang player")
-root.iconbitmap("player.ico")
+root.iconbitmap("images/player.ico")
 root.geometry("900x600")
 root.option_add('*Font', 'Times 15')
 
