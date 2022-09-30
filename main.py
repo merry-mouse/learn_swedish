@@ -174,9 +174,9 @@ root.config(menu=my_menu)
 add_pdf_menu = Menu(my_menu)
 choose_pagenum_menu = Menu(my_menu)
 # add cascades and commands
-my_menu.add_cascade(label="Add PDF", menu=add_pdf_menu)
+my_menu.add_cascade(label="ADD PDF", menu=add_pdf_menu)
 add_pdf_menu.add_command(label="Add PDF in English", command=add_pdf)
-my_menu.add_cascade(label="Choose page number",menu=choose_pagenum_menu)
+my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
 choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=choose_pagenumber)
 
 
