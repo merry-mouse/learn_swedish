@@ -170,9 +170,10 @@ stop_button.grid(row=0, column=1, padx=10)
 my_menu = Menu(root)
 root.config(menu=my_menu)
 
-# Add Add PDF Menu
+# Add Add PDF and choose page number Menu
 add_pdf_menu = Menu(my_menu)
 choose_pagenum_menu = Menu(my_menu)
+# add cascades and commands
 my_menu.add_cascade(label="Add PDF", menu=add_pdf_menu)
 add_pdf_menu.add_command(label="Add PDF in English", command=add_pdf)
 my_menu.add_cascade(label="Choose page number",menu=choose_pagenum_menu)
