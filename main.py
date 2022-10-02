@@ -4,34 +4,34 @@ from gtts import gTTS # for making text-to-speech mp3 file
 import pygame # to build a player and play the sound
 import re # to separate sentences from the text
 # for creating a player:
+# import tkinter as tk
 from tkinter import * # standard GUI lib
 from tkinter import filedialog
 import os
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 
-# read pdf in english
-pdfFile = open("LittlePrince.pdf","rb")
-pdfReader = PyPDF2.PdfFileReader(pdfFile)
+def extract_text(pdf_file):
+    # read pdf in english
+    pdfFile = open(pdf_file,"rb")
+    pdfReader = PyPDF2.PdfFileReader(pdfFile)
+    # get num of pages
+    # numOfPages = pdfReader.numPages
+    # get particular page and extract text
+    page = pdfReader.getPage(1) # starts with 0!
+    EngText = page.extractText()
+    return EngText
 
-# get num of pages
-numOfPages = pdfReader.numPages
-
-# get particular page and extract text
-page = pdfReader.getPage(1) # starts with 0!
-EngText = page.extractText()
-
-
-# regex patterns for separating sentences from the text on the page
-alphabets= "([A-Za-z])"
-prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
-suffixes = "(Inc|Ltd|Jr|Sr|Co)"
-starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
-acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
-websites = "[.](com|net|org|io|gov)"
-digits = "([0-9])"
 
 # split each sentence
 def split_into_sentences(text):
+    # regex patterns for separating sentences from the text on the page
+    alphabets= "([A-Za-z])"
+    prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
+    suffixes = "(Inc|Ltd|Jr|Sr|Co)"
+    starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
+    acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
+    websites = "[.](com|net|org|io|gov)"
+    digits = "([0-9])"
     text = " " + text + "  "
     text = text.replace("\n"," ")
     text = re.sub(prefixes,"\\1<prd>",text)
@@ -60,40 +60,46 @@ def split_into_sentences(text):
     sentences = [s.replace("\t", " ") for s in sentences] # get rid of tabs
     return sentences
     
-# call function to split sentences and store it 
-eng_page = split_into_sentences(EngText)
-swe_page = []
+# # call function to split sentences and store it 
+# eng_page = split_into_sentences(EngText)
+# swe_page = []
 
-# Translate eng page to swedish
-translator = Translator() # initiate translator
-for eng_sentence in eng_page:
-    translated_to_swe_sentence = translator.translate(eng_sentence,src='en', dest='sv').text
-    swe_page.append(translated_to_swe_sentence)
+# # Translate eng page to swedish
+def translate_into_swedish(english_sentences):
+    translator = Translator() # initiate translator
+    translated_to_swe_sentences = []
+    for eng_sentence in english_sentences:
+        translated_to_swe_sentence = translator.translate(eng_sentence,src='en', dest='sv').text
+        translated_to_swe_sentences.append(translated_to_swe_sentence)
+    return translated_to_swe_sentences
 
 
-# # create text-to-speech audiofiles, save them in sounds directory
-# def text_to_speech(english_text, swedish_text):
-#     for i in range(len(english_text)):
-#         tts_eng_sent = gTTS(english_text[i], lang="en")
-#         tts_swe_sent = gTTS(swedish_text[i], lang="sv")
-#         tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}.mp3")
-#         tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}_2.mp3")
+# create text-to-speech audiofiles, save them in sounds directory
+def text_to_speech(english_text, swedish_text):
+    for i in range(len(english_text)):
+        tts_eng_sent = gTTS(english_text[i], lang="en")
+        tts_swe_sent = gTTS(swedish_text[i], lang="sv")
+        tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}.mp3")
+        tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}_2.mp3")
 
 # # call text-to-speech function, create sounds from each sentence, store them in sounds
 # text_to_speech(eng_page, swe_page)
 # # clips = [AudioFileClip(c) for c in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds")]
 
-# # store all sounds objects in one list
-# clips =[]
-# for a in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds"):
-#     clips.append(AudioFileClip("./sounds/" + a))
+# store all sounds objects in one list and merge
+def merge_eng_swe_sounds():
+    clips =[]
+    for sounds in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds"):
+        clips.append(AudioFileClip("./sounds/" + sounds))
 
-# # merge all sounds together
-# c = concatenate_audioclips(clips)
-# c.write_audiofile("merged.mp3")
+    # merge all sounds together
+    c = concatenate_audioclips(clips)
+    c.write_audiofile("merged.mp3")
 
 # merge two texts together
-merged_text = [x for y in zip(eng_page, swe_page) for x in y]
+def merge_eng_swe_sentences(splitted_eng_sentences, splitted_swe_sentences):
+    merged_text = [x for y in zip(splitted_eng_sentences, splitted_swe_sentences) for x in y]
+    return merged_text
 
 # MAKING A PLAYER 
 root = Tk() # constructor
@@ -105,14 +111,6 @@ root.option_add('*Font', 'Times 15')
 # initialize pygame mixer
 pygame.mixer.init()
 
-# add pdf function
-def add_pdf():
-    eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
-    print(eng_pdf)
-
-# choose pagenumber function
-def choose_pagenumber():
-    pass
 # create playlist box
 song_box = Listbox(root, bg="black", fg="yellow", width=800, height=20)
 song_box.pack(pady=20)
@@ -126,10 +124,63 @@ stop_button_img = PhotoImage(file="images/button_stop_48px.png")
 controls_frame = Frame(root)
 controls_frame.pack()
 
-# put eng and swe text to the player
-for sentence in merged_text:
-    song_box.insert(END, sentence)
 
+# fields = 'Last Name', 'First Name', 'Job', 'Country'
+
+# def fetch(entries):
+#     for entry in entries:
+#         field = entry[0]
+#         text  = entry[1].get()
+#         print('%s: "%s"' % (field, text)) 
+
+# def makeform(root, fields):
+#     entries = []
+#     for field in fields:
+#         row = tk.Frame(root)
+#         lab = tk.Label(row, width=15, text=field, anchor='w')
+#         ent = tk.Entry(row)
+#         row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+#         lab.pack(side=tk.LEFT)
+#         ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
+#         entries.append((field, ent))
+#     return entries
+
+# if __name__ == '__main__':
+#     root = tk.Tk()
+#     ents = makeform(root, fields)
+#     root.bind('<Return>', (lambda event, e=ents: fetch(e)))   
+#     b1 = tk.Button(root, text='Show',
+#                   command=(lambda e=ents: fetch(e)))
+#     b1.pack(side=tk.LEFT, padx=5, pady=5)
+#     b2 = tk.Button(root, text='Quit', command=root.quit)
+#     b2.pack(side=tk.LEFT, padx=5, pady=5)
+
+# # put eng and swe text to the player
+# for sentence in merged_text:
+#     song_box.insert(END, sentence)
+
+# add pdf function
+def add_pdf():
+    # user choise of PDF
+    eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
+    # extract text from English PDF
+    extracted_eng_text = extract_text(eng_pdf)
+    # split it into separate sentences
+    splitted_eng_sentences = split_into_sentences(extracted_eng_text)
+    # translate them to swedish
+    translated_to_swe_sentences = translate_into_swedish(splitted_eng_sentences)
+    # create text-to-speech audios, save them in /sounds
+    text_to_speech(splitted_eng_sentences, translated_to_swe_sentences)
+    # store all sounds objects in one list and merge
+    merge_eng_swe_sounds()
+    # merge eng and swe sentences elementwise for printing
+    merged_text_eng_swe = merge_eng_swe_sentences(splitted_eng_sentences, translated_to_swe_sentences)
+    for sentence in merged_text_eng_swe:
+        song_box.insert(END, sentence)
+
+# choose pagenumber function
+def choose_pagenumber():
+    pass
 # play eng and swe mp3 files
 def play():    
     pygame.mixer.music.load("merged.mp3", "mp3")
@@ -178,6 +229,6 @@ my_menu.add_cascade(label="ADD PDF", menu=add_pdf_menu)
 add_pdf_menu.add_command(label="Add PDF in English", command=add_pdf)
 my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
 choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=choose_pagenumber)
-
+choose_pagenum_menu.add_command(label=Entry(root))
 
 root.mainloop()
