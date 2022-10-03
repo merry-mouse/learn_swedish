@@ -7,6 +7,7 @@ import re # to separate sentences from the text
 # import tkinter as tk
 from tkinter import * # standard GUI lib
 from tkinter import filedialog
+from tkinter import simpledialog
 import os
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 
@@ -82,9 +83,6 @@ def text_to_speech(english_text, swedish_text):
         tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}.mp3")
         tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}_2.mp3")
 
-# # call text-to-speech function, create sounds from each sentence, store them in sounds
-# text_to_speech(eng_page, swe_page)
-# # clips = [AudioFileClip(c) for c in os.listdir("C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds")]
 
 # store all sounds objects in one list and merge
 def merge_eng_swe_sounds():
@@ -124,40 +122,6 @@ stop_button_img = PhotoImage(file="images/button_stop_48px.png")
 controls_frame = Frame(root)
 controls_frame.pack()
 
-
-# fields = 'Last Name', 'First Name', 'Job', 'Country'
-
-# def fetch(entries):
-#     for entry in entries:
-#         field = entry[0]
-#         text  = entry[1].get()
-#         print('%s: "%s"' % (field, text)) 
-
-# def makeform(root, fields):
-#     entries = []
-#     for field in fields:
-#         row = tk.Frame(root)
-#         lab = tk.Label(row, width=15, text=field, anchor='w')
-#         ent = tk.Entry(row)
-#         row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-#         lab.pack(side=tk.LEFT)
-#         ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
-#         entries.append((field, ent))
-#     return entries
-
-# if __name__ == '__main__':
-#     root = tk.Tk()
-#     ents = makeform(root, fields)
-#     root.bind('<Return>', (lambda event, e=ents: fetch(e)))   
-#     b1 = tk.Button(root, text='Show',
-#                   command=(lambda e=ents: fetch(e)))
-#     b1.pack(side=tk.LEFT, padx=5, pady=5)
-#     b2 = tk.Button(root, text='Quit', command=root.quit)
-#     b2.pack(side=tk.LEFT, padx=5, pady=5)
-
-# # put eng and swe text to the player
-# for sentence in merged_text:
-#     song_box.insert(END, sentence)
 
 # add pdf function
 def add_pdf():
@@ -228,7 +192,23 @@ choose_pagenum_menu = Menu(my_menu)
 my_menu.add_cascade(label="ADD PDF", menu=add_pdf_menu)
 add_pdf_menu.add_command(label="Add PDF in English", command=add_pdf)
 my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
-choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=choose_pagenumber)
-choose_pagenum_menu.add_command(label=Entry(root))
+
+
+
+
+def take_user_input_for_something():
+    user_input = simpledialog.askstring("Please type a number", "(0-100)")
+    if user_input != "":
+        print(user_input)
+
+choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=take_user_input_for_something)
+
+# dropDown = Menu(choose_pagenum_menu, tearoff = 0)
+# dropDown.add_command(label = "Please, choose stating page (0-pagenum)", command = take_user_input_for_something)
+
+
+# choose_pagenum_menu.add_cascade(label = "Choose page number", menu = dropDown)
+# root.config(menu = choose_pagenum_menu)
+
 
 root.mainloop()
