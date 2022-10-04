@@ -179,11 +179,20 @@ def add_pdf():
     
     # delete all messages
     song_box.delete(0,END)
-    
+
     # merge eng and swe sentences elementwise for printing
     merged_text_eng_swe = merge_eng_swe_sentences(splitted_eng_sentences, translated_to_swe_sentences)
     for sentence in merged_text_eng_swe:
         song_box.insert(END, sentence)
+
+    # delete all sounds files in sound folder, since we merged them, we don't need them anymore
+    path = "C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/"
+    for file_name in os.listdir(path):
+    # construct full file path
+        file = path + file_name
+        if os.path.isfile(file):
+            print('Deleting file:', file)
+            os.remove(file)
 
 # choose pagenumber function
 def choose_pagenumber():
