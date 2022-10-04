@@ -11,14 +11,14 @@ from tkinter import simpledialog
 import os
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 
-def extract_text(pdf_file):
+def extract_text(pdf_file, page_num):
     # read pdf in english
     pdfFile = open(pdf_file,"rb")
     pdfReader = PyPDF2.PdfFileReader(pdfFile)
     # get num of pages
     # numOfPages = pdfReader.numPages
     # get particular page and extract text
-    page = pdfReader.getPage(1) # starts with 0!
+    page = pdfReader.getPage(page_num) # starts with 0!
     EngText = page.extractText()
     return EngText
 
@@ -127,8 +127,12 @@ controls_frame.pack()
 def add_pdf():
     # user choise of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
+    
+    choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="normal")
+    
+    page_num = take_user_input_for_something()
     # extract text from English PDF
-    extracted_eng_text = extract_text(eng_pdf)
+    extracted_eng_text = extract_text(eng_pdf, page_num)
     # split it into separate sentences
     splitted_eng_sentences = split_into_sentences(extracted_eng_text)
     # translate them to swedish
@@ -198,10 +202,12 @@ my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
 
 def take_user_input_for_something():
     user_input = simpledialog.askstring("Please type a number", "(0-100)")
-    if user_input != "":
-        print(user_input)
+    return int(user_input)
+    # if user_input != "":
+    #     print(user_input)
 
 choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=take_user_input_for_something)
+choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="disabled")
 
 # dropDown = Menu(choose_pagenum_menu, tearoff = 0)
 # dropDown.add_command(label = "Please, choose stating page (0-pagenum)", command = take_user_input_for_something)
