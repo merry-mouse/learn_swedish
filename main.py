@@ -1,3 +1,4 @@
+from cgitb import text
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
 from gtts import gTTS # for making text-to-speech mp3 file
@@ -125,22 +126,60 @@ controls_frame.pack()
 
 # add pdf function
 def add_pdf():
+
     # user choise of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
     
+    # change the state of the disabled choose pagenum menu
     choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="normal")
+    root.update()
     
+    # open pagenum input window
     page_num = take_user_input_for_something()
+    
+    # message for the user
+    song_box.insert(END, "Extracting text...")
+    root.update()
+
+
     # extract text from English PDF
     extracted_eng_text = extract_text(eng_pdf, page_num)
+
+    # message for the user
+    song_box.insert(END, "Splitting into sentences...")
+    root.update()
+
+
     # split it into separate sentences
     splitted_eng_sentences = split_into_sentences(extracted_eng_text)
+
+    # message for the user
+    song_box.insert(END, "Translating to Swedish...")
+    root.update()
+
+
     # translate them to swedish
     translated_to_swe_sentences = translate_into_swedish(splitted_eng_sentences)
+
+    # message for the user
+    song_box.insert(END, "Creating text-to-speech sounds for english and swedish text...")
+    root.update()
+
+
     # create text-to-speech audios, save them in /sounds
     text_to_speech(splitted_eng_sentences, translated_to_swe_sentences)
+
+    # message for the user
+    song_box.insert(END, "Merging sounds...Almost done...")
+    root.update()
+
+
     # store all sounds objects in one list and merge
     merge_eng_swe_sounds()
+    
+    # delete all messages
+    song_box.delete(0,END)
+    
     # merge eng and swe sentences elementwise for printing
     merged_text_eng_swe = merge_eng_swe_sentences(splitted_eng_sentences, translated_to_swe_sentences)
     for sentence in merged_text_eng_swe:
