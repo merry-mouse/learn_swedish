@@ -2,10 +2,9 @@ from cgitb import text
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
 from gtts import gTTS # for making text-to-speech mp3 file
-import pygame # to build a player and play the sound
+import pygame # to play the sound
 import re # to separate sentences from the text
 # for creating a player:
-# import tkinter as tk
 from tkinter import * # standard GUI lib
 from tkinter import filedialog
 from tkinter import simpledialog
@@ -17,7 +16,7 @@ def extract_text(pdf_file, page_num):
     pdfFile = open(pdf_file,"rb")
     pdfReader = PyPDF2.PdfFileReader(pdfFile)
     # get num of pages
-    # numOfPages = pdfReader.numPages
+    numOfPages = pdfReader.numPages
     # get particular page and extract text
     page = pdfReader.getPage(page_num) # starts with 0!
     EngText = page.extractText()
@@ -62,10 +61,6 @@ def split_into_sentences(text):
     sentences = [s.replace("\t", " ") for s in sentences] # get rid of tabs
     return sentences
     
-# # call function to split sentences and store it 
-# eng_page = split_into_sentences(EngText)
-# swe_page = []
-
 # # Translate eng page to swedish
 def translate_into_swedish(english_sentences):
     translator = Translator() # initiate translator
@@ -107,7 +102,7 @@ root.iconbitmap("images/player.ico")
 root.geometry("900x600")
 root.option_add('*Font', 'Times 15')
 
-# initialize pygame mixer
+# initialize pygame mixer to play the sound
 pygame.mixer.init()
 
 # create playlist box
@@ -129,18 +124,22 @@ def add_pdf():
 
     # user choise of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
-    
+   
+    pdfFile = open(eng_pdf,"rb")
+    pdfReader = PyPDF2.PdfFileReader(pdfFile)
+    # get num of pages
+    numOfPages = pdfReader.numPages
+
     # change the state of the disabled choose pagenum menu
     choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="normal")
     root.update()
     
     # open pagenum input window
-    page_num = take_user_input_for_something()
+    page_num = take_user_input_for_pagenum(numOfPages)
     
     # message for the user
     song_box.insert(END, "Extracting text...")
     root.update()
-
 
     # extract text from English PDF
     extracted_eng_text = extract_text(eng_pdf, page_num)
@@ -149,14 +148,12 @@ def add_pdf():
     song_box.insert(END, "Splitting into sentences...")
     root.update()
 
-
     # split it into separate sentences
     splitted_eng_sentences = split_into_sentences(extracted_eng_text)
 
     # message for the user
     song_box.insert(END, "Translating to Swedish...")
     root.update()
-
 
     # translate them to swedish
     translated_to_swe_sentences = translate_into_swedish(splitted_eng_sentences)
@@ -165,14 +162,12 @@ def add_pdf():
     song_box.insert(END, "Creating text-to-speech sounds for english and swedish text...")
     root.update()
 
-
     # create text-to-speech audios, save them in /sounds
     text_to_speech(splitted_eng_sentences, translated_to_swe_sentences)
 
     # message for the user
     song_box.insert(END, "Merging sounds...Almost done...")
     root.update()
-
 
     # store all sounds objects in one list and merge
     merge_eng_swe_sounds()
@@ -247,22 +242,14 @@ my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
 
 
 
-
-def take_user_input_for_something():
-    user_input = simpledialog.askstring("Please type a number", "(0-100)")
+def take_user_input_for_pagenum(last_page):
+    user_input = simpledialog.askstring("Page number", f" Type page number(0-{last_page})")
     return int(user_input)
     # if user_input != "":
     #     print(user_input)
 
-choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=take_user_input_for_something)
+choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=take_user_input_for_pagenum)
 choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="disabled")
-
-# dropDown = Menu(choose_pagenum_menu, tearoff = 0)
-# dropDown.add_command(label = "Please, choose stating page (0-pagenum)", command = take_user_input_for_something)
-
-
-# choose_pagenum_menu.add_cascade(label = "Choose page number", menu = dropDown)
-# root.config(menu = choose_pagenum_menu)
 
 
 root.mainloop()
