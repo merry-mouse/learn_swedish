@@ -22,7 +22,7 @@ def last_pagenum(file):
 
 # ask which page user wants to read/listen to
 def take_user_input_for_pagenum(last_page):
-    user_input = simpledialog.askstring("Page number", f" Type page number(0-{last_page})")
+    user_input = simpledialog.askstring("Page number", f" Type page number(1-{last_page})")
     return int(user_input)
 
 
@@ -31,8 +31,6 @@ def extract_text(pdf_file, page_num):
     # read pdf in english
     pdfFile = open(pdf_file,"rb")
     pdfReader = PyPDF2.PdfFileReader(pdfFile)
-    # get num of pages
-    numOfPages = pdfReader.numPages
     # get particular page and extract text
     page = pdfReader.getPage(page_num) # starts with 0!
     EngText = page.extractText()
@@ -110,6 +108,7 @@ def merge_eng_swe_sounds():
 def merge_eng_swe_sentences(splitted_eng_sentences, splitted_swe_sentences):
     merged_text = [x for y in zip(splitted_eng_sentences, splitted_swe_sentences) for x in y]
     return merged_text
+
 
 # MAKING A PLAYER 
 root = Tk() # constructor
@@ -250,12 +249,11 @@ root.config(menu=my_menu)
 # Add Add PDF and choose page number Menu
 add_pdf_menu = Menu(my_menu)
 choose_pagenum_menu = Menu(my_menu)
+
 # add cascades and commands
 my_menu.add_cascade(label="ADD PDF", menu=add_pdf_menu)
 add_pdf_menu.add_command(label="Add PDF in English", command=add_pdf)
 my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
-
-
 choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=take_user_input_for_pagenum)
 choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="disabled")
 
