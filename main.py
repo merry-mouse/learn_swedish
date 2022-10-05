@@ -11,6 +11,8 @@ from tkinter import simpledialog
 import os
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 
+
+# getting number of all pages in pdf to put them into input window 
 def last_pagenum(file):
     pdfFile = open(file,"rb")
     pdfReader = PyPDF2.PdfFileReader(pdfFile)
@@ -18,6 +20,13 @@ def last_pagenum(file):
     numOfPages = pdfReader.numPages
     return numOfPages
 
+# ask which page user wants to read/listen to
+def take_user_input_for_pagenum(last_page):
+    user_input = simpledialog.askstring("Page number", f" Type page number(0-{last_page})")
+    return int(user_input)
+
+
+# extract text from the pdf page
 def extract_text(pdf_file, page_num):
     # read pdf in english
     pdfFile = open(pdf_file,"rb")
@@ -132,6 +141,7 @@ def add_pdf():
     # user choise of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
    
+    # count number of all pages in pdf to insert it into the message
     max_pages = last_pagenum(eng_pdf)
 
     # change the state of the disabled choose pagenum menu
@@ -229,8 +239,9 @@ pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, comm
 stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
 
 play_button.grid(row=0, column=0, padx=10)
-pause_button.grid(row=0, column=2, padx=10)
 stop_button.grid(row=0, column=1, padx=10)
+pause_button.grid(row=0, column=2, padx=10)
+
 
 # create Menu
 my_menu = Menu(root)
@@ -244,11 +255,6 @@ my_menu.add_cascade(label="ADD PDF", menu=add_pdf_menu)
 add_pdf_menu.add_command(label="Add PDF in English", command=add_pdf)
 my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
 
-
-
-def take_user_input_for_pagenum(last_page):
-    user_input = simpledialog.askstring("Page number", f" Type page number(0-{last_page})")
-    return int(user_input)
 
 choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=take_user_input_for_pagenum)
 choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="disabled")
