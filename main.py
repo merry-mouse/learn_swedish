@@ -11,6 +11,13 @@ from tkinter import simpledialog
 import os
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 
+def last_pagenum(file):
+    pdfFile = open(file,"rb")
+    pdfReader = PyPDF2.PdfFileReader(pdfFile)
+    # get num of pages
+    numOfPages = pdfReader.numPages
+    return numOfPages
+
 def extract_text(pdf_file, page_num):
     # read pdf in english
     pdfFile = open(pdf_file,"rb")
@@ -125,17 +132,14 @@ def add_pdf():
     # user choise of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
    
-    pdfFile = open(eng_pdf,"rb")
-    pdfReader = PyPDF2.PdfFileReader(pdfFile)
-    # get num of pages
-    numOfPages = pdfReader.numPages
+    max_pages = last_pagenum(eng_pdf)
 
     # change the state of the disabled choose pagenum menu
     choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="normal")
     root.update()
     
     # open pagenum input window
-    page_num = take_user_input_for_pagenum(numOfPages)
+    page_num = take_user_input_for_pagenum(max_pages)
     
     # message for the user
     song_box.insert(END, "Extracting text...")
@@ -245,8 +249,6 @@ my_menu.add_cascade(label="PAGE NUMBER",menu=choose_pagenum_menu)
 def take_user_input_for_pagenum(last_page):
     user_input = simpledialog.askstring("Page number", f" Type page number(0-{last_page})")
     return int(user_input)
-    # if user_input != "":
-    #     print(user_input)
 
 choose_pagenum_menu.add_command(label="Choose pagenum or start from the beginning", command=take_user_input_for_pagenum)
 choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="disabled")
