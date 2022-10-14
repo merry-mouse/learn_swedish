@@ -128,8 +128,8 @@ song_box.pack(pady=20)
 play_button_img = PhotoImage(file="images/button_play_48px.png")
 pause_button_img = PhotoImage(file="images/button_pause_48px.png")
 stop_button_img = PhotoImage(file="images/button_stop_48px.png")
-forward_button_img = PhotoImage(file="images/forward_button.png")
-back_button_img = PhotoImage(file="images/back_button.png")
+forward_button_img = PhotoImage(file="images/forward_button_48px.png")
+back_button_img = PhotoImage(file="images/back_button_48px.png")
 
 # create player control frame
 controls_frame = Frame(root)
@@ -141,7 +141,7 @@ def add_pdf():
 
     # user choise of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
-   
+    
     # count number of all pages in pdf to insert it into the message
     max_pages = last_pagenum(eng_pdf)
 
@@ -190,6 +190,10 @@ def add_pdf():
     # delete all messages
     song_box.delete(0,END)
 
+    # insert file directory on the top of the box
+    song_box.insert(END, eng_pdf+"\n")
+
+
     # merge eng and swe sentences elementwise for printing
     merged_text_eng_swe = merge_eng_swe_sentences(splitted_eng_sentences, translated_to_swe_sentences)
     for sentence in merged_text_eng_swe:
@@ -207,15 +211,20 @@ def add_pdf():
 # choose pagenumber function
 def choose_pagenumber():
     pass
+
 # play eng and swe mp3 files
 def play():    
     pygame.mixer.music.load("merged.mp3", "mp3")
     pygame.mixer.music.play(loops=0)
+
 # stop playing audio
 def stop():
     pygame.mixer.music.stop()
     song_box.select_clear(ACTIVE)
 
+# read and play the next page
+def next_page():
+      pass
 # create global pause variable
 global paused 
 paused = False
@@ -238,12 +247,12 @@ def pause(is_paused):
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
 pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, command=lambda: pause(paused))
 stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
-forward_button = Button(controls_frame,image=forward_button_img, borderwidth=0, command=stop)
-stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
+forward_button = Button(controls_frame,image=forward_button_img, borderwidth=0, command=next_page)
+back_button = Button(controls_frame,image=back_button_img, borderwidth=0, command=stop)
 
 
-pause_button.grid(row=0, column=1, padx=10)
-pause_button.grid(row=0, column=0, padx=10)
+back_button.grid(row=0, column=0, padx=10)
+forward_button.grid(row=0, column=1, padx=10)
 play_button.grid(row=0, column=2, padx=10)
 stop_button.grid(row=0, column=3, padx=10)
 pause_button.grid(row=0, column=4, padx=10)
