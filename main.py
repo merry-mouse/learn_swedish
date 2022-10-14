@@ -11,7 +11,7 @@ from tkinter import simpledialog
 import os
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 
-
+page_num = 1
 # getting number of all pages in pdf to put them into input window 
 def last_pagenum(file):
     pdfFile = open(file,"rb")
@@ -149,6 +149,7 @@ def add_pdf():
     choose_pagenum_menu.entryconfig("Choose pagenum or start from the beginning", state="normal")
     root.update()
     
+    global page_num
     # open pagenum input window
     page_num = take_user_input_for_pagenum(max_pages)
     
@@ -191,7 +192,7 @@ def add_pdf():
     song_box.delete(0,END)
 
     # insert file directory on the top of the box
-    song_box.insert(END, eng_pdf+"\n")
+    song_box.insert(END, eng_pdf)
 
 
     # merge eng and swe sentences elementwise for printing
@@ -224,7 +225,8 @@ def stop():
 
 # read and play the next page
 def next_page():
-      pass
+    global page_num
+    print(page_num)
 # create global pause variable
 global paused 
 paused = False
