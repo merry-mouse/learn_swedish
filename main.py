@@ -128,6 +128,8 @@ song_box.pack(pady=20)
 play_button_img = PhotoImage(file="images/button_play_48px.png")
 pause_button_img = PhotoImage(file="images/button_pause_48px.png")
 stop_button_img = PhotoImage(file="images/button_stop_48px.png")
+forward_button_img = PhotoImage(file="images/forward_button.png")
+back_button_img = PhotoImage(file="images/back_button.png")
 
 # create player control frame
 controls_frame = Frame(root)
@@ -236,10 +238,16 @@ def pause(is_paused):
 play_button = Button(controls_frame,image=play_button_img, borderwidth=0, command=play)
 pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, command=lambda: pause(paused))
 stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
+forward_button = Button(controls_frame,image=forward_button_img, borderwidth=0, command=stop)
+stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
 
-play_button.grid(row=0, column=0, padx=10)
-stop_button.grid(row=0, column=1, padx=10)
-pause_button.grid(row=0, column=2, padx=10)
+
+pause_button.grid(row=0, column=1, padx=10)
+pause_button.grid(row=0, column=0, padx=10)
+play_button.grid(row=0, column=2, padx=10)
+stop_button.grid(row=0, column=3, padx=10)
+pause_button.grid(row=0, column=4, padx=10)
+
 
 
 # create Menu
