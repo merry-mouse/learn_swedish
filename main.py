@@ -244,6 +244,99 @@ def stop():
     pygame.mixer.music.stop()
     song_box.select_clear(ACTIVE)
 
+
+def previous_page():
+        # PDF
+    eng_pdf = "LittlePrince.pdf"
+    
+    # count number of all pages in pdf 
+    max_pages = last_pagenum(eng_pdf)
+
+    # use global variable pagenum to change the number of the currenet page
+    global page_num
+    # check if it is bigger than last pagenum
+    if page_num < max_pages:
+        page_num -= 1
+    else:
+        pass
+
+    # delete all messages that could be previously inserted to the box
+    song_box.delete(0,END)
+
+    # message for the user (Filename)
+    song_box.insert(END, f"FILE NAME: {eng_pdf}")
+    root.update()
+
+    # message for the user (Page number)
+    song_box.insert(END, f"PAGE NUMBER: {page_num}")
+    root.update()
+
+    # message for the user
+    song_box.insert(END, "Extracting text...")
+    root.update()
+
+    # extract text from English PDF
+    extracted_eng_text = extract_text(eng_pdf, page_num)
+
+    # message for the user
+    song_box.insert(END, "Splitting into sentences...")
+    root.update()
+
+    # split it into separate sentences
+    splitted_eng_sentences = split_into_sentences(extracted_eng_text)
+
+    # message for the user
+    song_box.insert(END, "Translating to Swedish...")
+    root.update()
+
+    # translate them to swedish
+    translated_to_swe_sentences = translate_into_swedish(splitted_eng_sentences)
+
+    # message for the user
+    song_box.insert(END, "Creating text-to-speech sounds for english and swedish text...")
+    root.update()
+
+    # create text-to-speech audios, save them in /sounds
+    text_to_speech(splitted_eng_sentences, translated_to_swe_sentences)
+
+    # message for the user
+    song_box.insert(END, "Merging sounds...Almost done...")
+    root.update()
+
+
+    # store all sounds objects in one list and merge
+    merge_eng_swe_sounds()
+    
+    # delete all messages
+    song_box.delete(0,END)
+
+    # message for the user (Filename)
+    song_box.insert(END, f"FILE NAME: {eng_pdf}")
+    root.update()
+
+    # message for the user (Page number)
+    song_box.insert(END, f"PAGE NUMBER: {page_num}")
+    root.update()
+
+
+    # insert file directory on the top of the box
+    song_box.insert(END, eng_pdf)
+
+
+    # merge eng and swe sentences elementwise for printing
+    merged_text_eng_swe = merge_eng_swe_sentences(splitted_eng_sentences, translated_to_swe_sentences)
+    for sentence in merged_text_eng_swe:
+        song_box.insert(END, sentence)
+
+    # delete all sounds files in sound folder, since we merged them, we don't need them anymore
+    path = "C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/"
+    for file_name in os.listdir(path):
+    # construct full file path
+        file = path + file_name
+        if os.path.isfile(file):
+            print('Deleting file:', file)
+            os.remove(file)
+
 # read and play the next page
 def next_page():
 
@@ -361,7 +454,7 @@ play_button = Button(controls_frame,image=play_button_img, borderwidth=0, comman
 pause_button = Button(controls_frame,image=pause_button_img, borderwidth=0, command=lambda: pause(paused))
 stop_button = Button(controls_frame,image=stop_button_img, borderwidth=0, command=stop)
 forward_button = Button(controls_frame,image=forward_button_img, borderwidth=0, command=next_page)
-back_button = Button(controls_frame,image=back_button_img, borderwidth=0, command=stop)
+back_button = Button(controls_frame,image=back_button_img, borderwidth=0, command=previous_page)
 
 
 back_button.grid(row=0, column=0, padx=10)
