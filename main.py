@@ -153,6 +153,11 @@ def add_pdf():
     # open pagenum input window
     page_num = take_user_input_for_pagenum(max_pages)
     
+
+    # delete all messages that could be inserted to the box
+    song_box.delete(0,END)
+
+
     # message for the user
     song_box.insert(END, "Extracting text...")
     root.update()
