@@ -225,9 +225,19 @@ def add_pdf():
 
 # play eng and swe mp3 files
 def play():
+    # play merged sound for the current page
     global page_num    
     pygame.mixer.music.load(f"merged{page_num}.mp3", "mp3")
     pygame.mixer.music.play(loops=0)
+    
+    # delete previously merged sound if exists
+    previously_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged{int(page_num)-1}.mp3"
+
+    # If file exists, delete it #
+    if os.path.isfile(previously_merged_mp3):
+        os.remove(previously_merged_mp3)
+    else:    
+        pass
 
 # stop playing audio
 def stop():
@@ -243,7 +253,7 @@ def next_page():
     # count number of all pages in pdf 
     max_pages = last_pagenum(eng_pdf)
 
-    # use global variable pagenum to change the number of the currinet page
+    # use global variable pagenum to change the number of the currenet page
     global page_num
     # check if it is bigger than last pagenum
     if page_num < max_pages:
@@ -251,7 +261,7 @@ def next_page():
     else:
         pass
 
-    # delete all messages that could be inserted to the box
+    # delete all messages that could be previously inserted to the box
     song_box.delete(0,END)
 
     # message for the user (Filename)
@@ -300,6 +310,15 @@ def next_page():
     
     # delete all messages
     song_box.delete(0,END)
+
+    # message for the user (Filename)
+    song_box.insert(END, f"FILE NAME: {eng_pdf}")
+    root.update()
+
+    # message for the user (Page number)
+    song_box.insert(END, f"PAGE NUMBER: {page_num}")
+    root.update()
+
 
     # insert file directory on the top of the box
     song_box.insert(END, eng_pdf)
