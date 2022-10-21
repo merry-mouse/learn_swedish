@@ -102,7 +102,8 @@ def merge_eng_swe_sounds():
 
     # merge all sounds together
     c = concatenate_audioclips(clips)
-    c.write_audiofile("merged.mp3")
+    global page_num
+    c.write_audiofile(f"merged{page_num}.mp3")
 
 # merge two texts together
 def merge_eng_swe_sentences(splitted_eng_sentences, splitted_swe_sentences):
@@ -139,7 +140,7 @@ controls_frame.pack()
 # add pdf function
 def add_pdf():
 
-    # user choise of PDF
+    # user choice of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
     
     # count number of all pages in pdf to insert it into the message
@@ -156,6 +157,14 @@ def add_pdf():
 
     # delete all messages that could be inserted to the box
     song_box.delete(0,END)
+
+    # message for the user (Filename)
+    song_box.insert(END, f"FILE NAME: {eng_pdf}")
+    root.update()
+
+    # message for the user (Page number)
+    song_box.insert(END, f"PAGE NUMBER: {page_num}")
+    root.update()
 
 
     # message for the user
@@ -214,13 +223,10 @@ def add_pdf():
             print('Deleting file:', file)
             os.remove(file)
 
-# choose pagenumber function
-def choose_pagenumber():
-    pass
-
 # play eng and swe mp3 files
-def play():    
-    pygame.mixer.music.load("merged.mp3", "mp3")
+def play():
+    global page_num    
+    pygame.mixer.music.load(f"merged{page_num}.mp3", "mp3")
     pygame.mixer.music.play(loops=0)
 
 # stop playing audio
@@ -230,8 +236,89 @@ def stop():
 
 # read and play the next page
 def next_page():
+
+    # PDF
+    eng_pdf = "LittlePrince.pdf"
+    
+    # count number of all pages in pdf 
+    max_pages = last_pagenum(eng_pdf)
+
+    # use global variable pagenum to change the number of the currinet page
     global page_num
-    print(page_num)
+    # check if it is bigger than last pagenum
+    if page_num < max_pages:
+        page_num += 1
+    else:
+        pass
+
+    # delete all messages that could be inserted to the box
+    song_box.delete(0,END)
+
+    # message for the user (Filename)
+    song_box.insert(END, f"FILE NAME: {eng_pdf}")
+    root.update()
+
+    # message for the user (Page number)
+    song_box.insert(END, f"PAGE NUMBER: {page_num}")
+    root.update()
+
+    # message for the user
+    song_box.insert(END, "Extracting text...")
+    root.update()
+
+    # extract text from English PDF
+    extracted_eng_text = extract_text(eng_pdf, page_num)
+
+    # message for the user
+    song_box.insert(END, "Splitting into sentences...")
+    root.update()
+
+    # split it into separate sentences
+    splitted_eng_sentences = split_into_sentences(extracted_eng_text)
+
+    # message for the user
+    song_box.insert(END, "Translating to Swedish...")
+    root.update()
+
+    # translate them to swedish
+    translated_to_swe_sentences = translate_into_swedish(splitted_eng_sentences)
+
+    # message for the user
+    song_box.insert(END, "Creating text-to-speech sounds for english and swedish text...")
+    root.update()
+
+    # create text-to-speech audios, save them in /sounds
+    text_to_speech(splitted_eng_sentences, translated_to_swe_sentences)
+
+    # message for the user
+    song_box.insert(END, "Merging sounds...Almost done...")
+    root.update()
+
+
+    # store all sounds objects in one list and merge
+    merge_eng_swe_sounds()
+    
+    # delete all messages
+    song_box.delete(0,END)
+
+    # insert file directory on the top of the box
+    song_box.insert(END, eng_pdf)
+
+
+    # merge eng and swe sentences elementwise for printing
+    merged_text_eng_swe = merge_eng_swe_sentences(splitted_eng_sentences, translated_to_swe_sentences)
+    for sentence in merged_text_eng_swe:
+        song_box.insert(END, sentence)
+
+    # delete all sounds files in sound folder, since we merged them, we don't need them anymore
+    path = "C://Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/"
+    for file_name in os.listdir(path):
+    # construct full file path
+        file = path + file_name
+        if os.path.isfile(file):
+            print('Deleting file:', file)
+            os.remove(file)
+
 # create global pause variable
 global paused 
 paused = False
