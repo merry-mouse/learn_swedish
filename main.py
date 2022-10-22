@@ -11,7 +11,10 @@ from tkinter import simpledialog
 import os
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 
+
+# make page number and filename global because we need them in several functions
 page_num = 1
+eng_pdf = ""
 # getting number of all pages in pdf to put them into input window 
 def last_pagenum(file):
     pdfFile = open(file,"rb")
@@ -103,7 +106,7 @@ def merge_eng_swe_sounds():
     # merge all sounds together
     c = concatenate_audioclips(clips)
     global page_num
-    c.write_audiofile(f"merged{page_num}.mp3")
+    c.write_audiofile(f"merged{page_num}.mp3") # nerged file name will have page number
 
 # merge two texts together
 def merge_eng_swe_sentences(splitted_eng_sentences, splitted_swe_sentences):
@@ -140,6 +143,7 @@ controls_frame.pack()
 # add pdf function
 def add_pdf():
 
+    global eng_pdf
     # user choice of PDF
     eng_pdf = filedialog.askopenfilename(initialdir="C:/Users/potek/PythonAfter6months/FINAL_PROJECT/", title="Choose PDF", filetypes=(("pdf files", "*.pdf"), ))
     
@@ -231,11 +235,12 @@ def play():
     pygame.mixer.music.play(loops=0)
     
     # delete previously merged sound if exists
-    previously_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged{int(page_num)-1}.mp3"
+    last_page_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged{int(page_num)-1}.mp3"
+    next_page_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged{int(page_num)+1}.mp3"
 
     # If file exists, delete it #
-    if os.path.isfile(previously_merged_mp3):
-        os.remove(previously_merged_mp3)
+    if os.path.isfile(last_page_merged_mp3, next_page_merged_mp3):
+        os.remove(last_page_merged_mp3, next_page_merged_mp3)
     else:    
         pass
 
@@ -246,8 +251,6 @@ def stop():
 
 
 def previous_page():
-        # PDF
-    eng_pdf = "LittlePrince.pdf"
     
     # count number of all pages in pdf 
     max_pages = last_pagenum(eng_pdf)
@@ -339,9 +342,6 @@ def previous_page():
 
 # read and play the next page
 def next_page():
-
-    # PDF
-    eng_pdf = "LittlePrince.pdf"
     
     # count number of all pages in pdf 
     max_pages = last_pagenum(eng_pdf)
