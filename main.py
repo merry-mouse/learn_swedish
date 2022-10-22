@@ -91,10 +91,11 @@ def translate_into_swedish(english_sentences):
 # create text-to-speech audiofiles, save them in sounds directory
 def text_to_speech(english_text, swedish_text):
     for i in range(len(english_text)):
+        sent_num = str(i).zfill(3) # adding zeroes in front of the sentence number for merging them in the right order
         tts_eng_sent = gTTS(english_text[i], lang="en")
         tts_swe_sent = gTTS(swedish_text[i], lang="sv")
-        tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}.mp3")
-        tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{i}_2.mp3")
+        tts_eng_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{sent_num}a.mp3")
+        tts_swe_sent.save(savefile=f"C:/Users/potek/PythonAfter6months/FINAL_PROJECT/sounds/sentence{sent_num}b.mp3")
 
 
 # store all sounds objects in one list and merge
