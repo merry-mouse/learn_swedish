@@ -106,7 +106,7 @@ def merge_eng_swe_sounds():
     # merge all sounds together
     c = concatenate_audioclips(clips)
     global page_num
-    c.write_audiofile(f"merged{page_num}.mp3") # nerged file name will have page number
+    c.write_audiofile(f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged_sounds/merged{page_num}.mp3") # nerged file name will have page number
 
 # merge two texts together
 def merge_eng_swe_sentences(splitted_eng_sentences, splitted_swe_sentences):
@@ -231,18 +231,23 @@ def add_pdf():
 def play():
     # play merged sound for the current page
     global page_num    
-    pygame.mixer.music.load(f"merged{page_num}.mp3", "mp3")
+    pygame.mixer.music.load(f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged_sounds/merged{page_num}.mp3", "mp3")
     pygame.mixer.music.play(loops=0)
     
     # delete previously merged sound if exists
-    last_page_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged{int(page_num)-1}.mp3"
-    next_page_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged{int(page_num)+1}.mp3"
+    last_page_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged_sounds/merged{int(page_num)-1}.mp3"
+    next_page_merged_mp3 = f"C://Users/potek/PythonAfter6months/FINAL_PROJECT/merged_sounds/merged{int(page_num)+1}.mp3"
 
-    # If file exists, delete it #
-    if os.path.isfile(last_page_merged_mp3, next_page_merged_mp3):
-        os.remove(last_page_merged_mp3, next_page_merged_mp3)
-    else:    
+    # If file exists, delete it 
+    try:
+        os.remove(last_page_merged_mp3)
+    except OSError:
         pass
+    try:
+        os.remove(next_page_merged_mp3)
+    except OSError:
+        pass
+
 
 # stop playing audio
 def stop():
