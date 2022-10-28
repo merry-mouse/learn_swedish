@@ -1,4 +1,3 @@
-from cgitb import text
 import PyPDF2 #for pdf reading
 from googletrans import Translator # for translating 
 from gtts import gTTS # for making text-to-speech mp3 file
@@ -128,6 +127,9 @@ pygame.mixer.init()
 # create playlist box
 song_box = Listbox(root, bg="black", fg="yellow", width=800, height=20)
 song_box.pack(pady=20)
+# message for the user (Filename)
+song_box.insert(END, "Choose and upload PDF in English")
+root.update()
 
 # define player control buttons
 play_button_img = PhotoImage(file="images/button_play_48px.png")
